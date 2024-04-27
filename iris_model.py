@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-import joblib  # Usado para salvar o modelo
+import joblib  # Usado para salvar e carregar o modelo
 
 # Carregar e preparar os dados
 data = load_iris()
@@ -26,3 +26,4 @@ if __name__ == '__main__':
     input_features = np.array(sys.argv[1:5], dtype=np.float64)  # Converter argumentos em array de floats
     result = predict(input_features)
     print("Predicted species:", result)
+
