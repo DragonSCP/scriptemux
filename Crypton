@@ -1,0 +1,85 @@
+import time
+import json
+import requests
+
+def get_unspent_outputs(address):
+    url = f'https://blockchain.info/unspent?active={address}'
+    response = requests.get(url)
+    utxo_set = json.loads(response.text)["unspoent_outputs"]
+    return utxo_set
+
+def select_outputs_greedy(unspent, target):
+    total = 0
+    selected = []
+    for utxo in unspent:
+        value = utxo['value']
+        if total + value > target:
+            excess = total + value - target
+            selected.append((utxo['tx_hash'], utxo['tx_output_n'], value - excess))
+            total += value - excess
+        else:
+            selected.append((utxo['tx_hash'], utxo['tx_output_n'], value))
+            total += value
+    change = total - target
+    if change > 0:
+        selected.append((selected[0][0], selected[0][1], change))
+        selected = selected[1:]
+    return selected
+
+def send_to_address(private_key, address, amount, change_address=None, fee_rate=10000):
+    url = "https://blockchain.info/merchant/payment"
+    params = {
+        "password": private_key,
+        "recipient": address,
+        "amount": amount,
+        "fee_rate": fee_rate,
+    }
+    if change_address:
+        params["change_address"] = change_address
+    response = requests.post(url, data=params)
+    return response.json()
+
+def mine_bitcoin():
+    print("Mineração de Bitcoin não é possível neste script, pois a mineração de Bitcoin requer hardware especializado e software especializado.")
+
+def menu():
+    print("Selecione uma opção:")
+    print("1. Encontrar criptomoedas")
+    print("2. Guardar criptomoedas")
+    print("3. Enviar criptomoedas para a carteira")
+    print("4. Minerar criptomoedas")
+    print("5. Sair")
+
+def main():
+    address = "bc1qaw9hxdgyr0vuqt6cld4mp0h3frs9r8jpscd0c4"
+    private_key = "sua_chave_privada_aqui"
+    change_address = "sua_endereço_de_mudança_aqui"
+    target = 55000000
+
+    while True:
+        menu()
+        opcao = int(input("Opção: "))
+        if opcao == 1:
+            unspent = get_unspent_outputs(address)
+            print("Lista de saídas não gastas:")
+            for utxo in unspent:
+                print(f"Hash: {utxo['tx_hash']}, Índice: {utxo['tx_output_n']}, Valor: {utxo['value']}")
+        elif opcao == 2:
+            unspent = get_unspent_outputs(address)
+            selected = select_outputs_greedy(unspent, target)
+            print("Saídas selecionadas:")
+            for utxo in selected:
+                print(f"Hash: {utxo[0]}, Índice: {utxo[1]}, Valor: {utxo[2]}")
+        elif opcao == 3:
+            recipient = input("Endereço do destinatário: ")
+            amount = int(input("Valor: "))
+            result = send_to_address(private_key, recipient, amount, change_address)
+            print(result)
+        elif opcao == 4:
+            mine_bitcoin()
+        elif opcao == 5:
+            break
+        else:
+            print("Opção inválida.")
+
+if __name__ == "__main__":
