@@ -1,0 +1,33 @@
+import time
+
+def send_crypto_to_wallet(crypto_amount, wallet_address):
+    # Code to send the found cryptocurrency to the wallet
+    # This will depend on the specific cryptocurrency and the API or library you are using
+    # For example, if you are using the Blockchain.info API for Bitcoin, you can use the send_many function
+    # to send the found Bitcoin to the wallet address
+    pass
+
+def find_and_send_crypto():
+    while True:
+        # Code to find new cryptocurrencies
+        # This will depend on the specific cryptocurrency and the API or library you are using
+        # For example, if you are looking for new Bitcoin, you can use the Blockchain.info API to scan for new transactions
+        # and then extract the Bitcoin addresses and amounts
+
+        # Once you find new cryptocurrencies, send them to the wallet
+        send_crypto_to_wallet(found_crypto_amount, wallet_address)
+
+        # Wait for a certain amount of time before checking again
+        time.sleep(60 * 60)
+
+# Update the find_crypto function to use the find_and_send_crypto function
+def find_crypto():
+    while True:
+        # Code to find new cryptocurrencies
+        # ...
+
+        # Once you find new cryptocurrencies, send them to the wallet
+        find_and_send_crypto()
+
+# Call the find_crypto function to start the process
+find_crypto()
